@@ -1,6 +1,9 @@
+import axios from 'axios'
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { RegisterModal } from './Register'
+
 
 const FlexCenter = styled.div`
     display: flex;
@@ -71,12 +74,31 @@ export function LoginPage(){
     const dialogRef = useRef();
     const inputID = useRef();
     const inputPW = useRef();
-
+    const navigate = useNavigate();
     const [renderDialog, setRenderDialog] = useState(false);
 
+    const [loginInfo, setLoginInfo] = useState({
+        user_id: '',
+        password: '',
+    })
+
+    const doLogin = async ()=>{
+        let loginRes = await axios.post(`${process.env.REACT_APP_BACKEND}/auth/login`, {
+            ...loginInfo
+        }, {withCredentials: true}).then(res => res.data)
+        if(loginRes.is_logined) navigate("/")
+    }
+
+    const checkSession = async ()=>{
+        return (await axios.get(`${process.env.REACT_APP_BACKEND}/auth/check`, {withCredentials: true}).then(res => res.data))
+    }
+
     useEffect(()=>{
+        //세션체크
+        checkSession().then(res => {if(res.is_logined) navigate("/")})
         inputID.current.focus();
     },[])
+
     useEffect(()=>{
         if(renderDialog) dialogRef.current.showModal();
     }, [renderDialog])
@@ -87,14 +109,24 @@ export function LoginPage(){
                 <div>
                     <FormControl>
                         <img src="/image/user.png" />
-                        <input type="text" ref={inputID}/>
+                        <input type="text" ref={inputID} onChange={e=>{
+                            setLoginInfo({
+                                password : loginInfo.password,
+                                user_id : e.target.value
+                            })
+                        }}/>
                     </FormControl>
                     <FormControl>
                         <img src="/image/password.png" />
-                        <input type="password" ref={inputPW}/>
+                        <input type="password" ref={inputPW} onChange={e=>{
+                            setLoginInfo({
+                                user_id : loginInfo.user_id,
+                                password : e.target.value
+                            })
+                        }}/>
                     </FormControl>
                     <ButtonGroup>
-                        <Button>LOGIN</Button>
+                        <Button onClick={e=>doLogin()}>LOGIN</Button>
                         <Button onClick={(e)=>{
                             setRenderDialog(1);
                         }}>REGISTER</Button>
@@ -103,10 +135,9 @@ export function LoginPage(){
             </LoginForm>
         </div>
         {
-            renderDialog ? (<dialog ref={dialogRef}>
+            renderDialog ? (<dialog ref={dialogRef} onClose={(e)=>{setRenderDialog(0)}}>
                 <RegisterModal renderState={setRenderDialog}/>
             </dialog>) : ''
         }
-        
     </Wrapper>
 }
