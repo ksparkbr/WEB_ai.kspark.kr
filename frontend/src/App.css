@@ -1,5 +1,6 @@
 .App {
   text-align: center;
+  font-family: "NotoSansKR";
 }
 
 .App-logo {
@@ -33,11 +34,26 @@ dialog{
   box-shadow: 3px 3px 5px 0px #00000077;
   border-radius: 1rem;
   transition: .5s;
+  min-width: 250px;
+  min-height: 150px;
+}
+dialog:modal{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 dialog::backdrop{
   background: #00000077;
+}
 
+div.dialog-msg{
+  padding: .5rem;
+  border-top: 1px solid blue;
+  border-bottom: 1px solid blue;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  text-align: center;
 }
 
 @keyframes App-logo-spin {

@@ -118,10 +118,13 @@ export function RegisterModal({renderState}){
         axios.post(process.env.REACT_APP_BACKEND + `/auth/register`, {
                 ...info
             }, {withCredentials: true}
-        ).then(res => console.log(res.data));
+        ).then(res => {
+            setRenderAlert({show: true, msg: res.data.msg});
+            return;
+        });
     }
 
-    useEffect(()=>{console.log(info)},[info])
+    useEffect(()=>{},[info])
 
     return <RegisterFormWrapper>
             <Flex style={{marginBottom: "1rem"}}>
@@ -168,6 +171,12 @@ export function RegisterModal({renderState}){
                                 ...info,
                                 passwordConfirm : e.target.value,
                             })
+                        }    
+                        }
+                        onKeyDown = {(e)=>{
+                            if(e.key == "Enter"){
+                                doRegister();
+                            }
                         }}
                     />
                 </FormControl>
@@ -187,9 +196,16 @@ export function RegisterModal({renderState}){
         </FlexColumn>
         {
             renderAlert.show ? (<dialog ref={alertModal} onClose={(e)=>{setRenderAlert({msg: '', show: false})}}>
-                <div style={{marginBottom: "1rem"}}>{renderAlert.msg}</div>
+                <div className="dialog-msg">{renderAlert.msg}</div>
                 <ButtonGroup>
-                    <Button onClick={(e)=>{setRenderAlert({msg: '', show: false})}}>확인</Button>
+                    <Button onClick={(e)=>{
+                        if(renderAlert.msg.search("가입완료") >= 0){
+                            renderState(0)
+                        }
+                        else{
+                            setRenderAlert({show: false});
+                        }
+                    }}>확인</Button>
                 </ButtonGroup>
             </dialog>) : ''
         }

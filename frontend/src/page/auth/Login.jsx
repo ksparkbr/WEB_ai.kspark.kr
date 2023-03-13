@@ -14,12 +14,11 @@ const FlexCenter = styled.div`
 const Wrapper = styled(FlexCenter)`
     width: 100wh;
     height: 100vh;
-    background: linear-gradient(0deg, #ccc, #f1f1f1);
 `
 
 const LoginForm = styled(FlexCenter)`
     width: 300px;
-    height: 200px;
+    height: 250px;
     box-shadow: 3px 3px 5px 0px #00000077;
     border-radius: 1rem;
     background-color: white;
@@ -74,8 +73,15 @@ export function LoginPage(){
     const dialogRef = useRef();
     const inputID = useRef();
     const inputPW = useRef();
+    const checkRemember = useRef();
     const navigate = useNavigate();
     const [renderDialog, setRenderDialog] = useState(false);
+
+    const alertModal = useRef();
+    const [renderAlert, setRenderAlert] = useState({
+        msg : '',
+        show : false
+    });
 
     const [loginInfo, setLoginInfo] = useState({
         user_id: '',
@@ -83,11 +89,28 @@ export function LoginPage(){
     })
 
     const doLogin = async ()=>{
-        let loginRes = await axios.post(`${process.env.REACT_APP_BACKEND}/auth/login`, {
+        await axios.post(`${process.env.REACT_APP_BACKEND}/auth/login`, {
             ...loginInfo
-        }, {withCredentials: true}).then(res => res.data)
-        if(loginRes.is_logined) navigate("/")
+        }, {withCredentials: true}).then(res => {
+            if(checkRemember.current.checked){
+                window.localStorage.setItem("SAVED_LOGIN_INFO", JSON.stringify({
+                    ...loginInfo
+                }))
+            }
+            else{
+                window.localStorage.removeItem("SAVED_LOGIN_INFO");
+            }
+            res.data.is_logined && navigate("/");
+        }).catch(err => {
+            setRenderAlert({show: true, msg: '로그인 실패'})
+        })
     }
+
+    useEffect(()=>{
+        if(renderAlert.show){
+            alertModal.current.showModal();
+        }
+    },[renderAlert])
 
     const checkSession = async ()=>{
         return (await axios.get(`${process.env.REACT_APP_BACKEND}/auth/check`, {withCredentials: true}).then(res => res.data))
@@ -97,6 +120,14 @@ export function LoginPage(){
         //세션체크
         checkSession().then(res => {if(res.is_logined) navigate("/")})
         inputID.current.focus();
+        try{
+            let {user_id, password} = JSON.parse(window.localStorage.getItem("SAVED_LOGIN_INFO"))
+            setLoginInfo({user_id, password});
+            inputID.current.value = user_id;
+            inputPW.current.value = password;
+            checkRemember.current.checked = true;
+        }
+        catch(e){}
     },[])
 
     useEffect(()=>{
@@ -123,7 +154,25 @@ export function LoginPage(){
                                 user_id : loginInfo.user_id,
                                 password : e.target.value
                             })
-                        }}/>
+                        }}
+                        onKeyDown={e => {
+                            if(e.key == "Enter"){
+                                doLogin();
+                            }
+                        }}
+                        />
+                    </FormControl>
+                    <FormControl style={{display: "flex", justifyContent: "center"}}>
+                        <input type="checkbox" 
+                               name="remember-login-info" 
+                               ref={checkRemember}
+                        />
+                        <label htmlFor="remember-login-info" 
+                               style={{
+                                    fontWeight: "bold",
+                                    marginLeft: ".5rem"
+                                }}
+                        >로그인정보 저장</label>
                     </FormControl>
                     <ButtonGroup>
                         <Button onClick={e=>doLogin()}>LOGIN</Button>
@@ -137,6 +186,16 @@ export function LoginPage(){
         {
             renderDialog ? (<dialog ref={dialogRef} onClose={(e)=>{setRenderDialog(0)}}>
                 <RegisterModal renderState={setRenderDialog}/>
+            </dialog>) : ''
+        }
+        {
+            renderAlert.show ? (<dialog ref={alertModal} onClose={(e)=>{setRenderAlert({msg: '', show: false})}}>
+                <div className="dialog-msg">{renderAlert.msg}</div>
+                <ButtonGroup>
+                    <Button onClick={(e)=>{
+                        setRenderAlert({msg: '', show: false})
+                    }}>확인</Button>
+                </ButtonGroup>
             </dialog>) : ''
         }
     </Wrapper>

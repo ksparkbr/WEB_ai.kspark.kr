@@ -9,7 +9,7 @@ export function SessionCheck(props){
         return (await axios.get(`${process.env.REACT_APP_BACKEND}/auth/check`, {withCredentials: true}).then(res => res.data))
     }
     useEffect(()=>{
-        checkSession().then(res => {
+        checkSession().then((res) => {
             if(!res?.is_logined){
                 setRender(false);
                 navigate("/login")
@@ -17,6 +17,10 @@ export function SessionCheck(props){
             else{
                 setRender(true);
             }
+        }).catch(err => {
+            console.log(err);
+            setRender(false);
+            navigate("/login")
         })
     },[])
     return <>{(render && props.children)}</>

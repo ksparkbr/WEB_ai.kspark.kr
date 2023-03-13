@@ -1,0 +1,21 @@
+export const reduxAction = {
+    PROMPT : (data) => {
+        return {
+            type : 'PROMPT',
+            data
+        }
+    },
+    ANSWER : (data) => {
+        return {
+            type : 'ANSWER',
+            data
+        }
+    },
+    HISTORY : (data) => {
+        return {
+            type : 'HISTORY',
+            data
+        }
+    },
+    REFRESH : () => { return {type : 'REFRESH'} }
+}
