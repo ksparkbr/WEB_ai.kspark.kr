@@ -70,6 +70,8 @@ export function Footer(){
     const textareaWrapper = useRef();
     const dispatch = useDispatch();
     const history = useSelector(s => s.history);
+    const remember = useSelector(s => s.remember);
+
     useEffect(()=>{
         sendPrompt('인사', true)
     },[])
@@ -101,7 +103,7 @@ export function Footer(){
         }
         if(history[history.length-1]?.type == 'prompt'){
             let historybuf = [...history];
-            let maxLength = 5;
+            let maxLength = remember;
             if(historybuf.length >= maxLength){
                 historybuf.splice(0, historybuf.length - maxLength);
             }

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux"
 import styled from "styled-components"
+import { ConversationMemory } from "../../../../component/ConversationMemory";
 import { Answer } from "./Answer";
 import { Prompt } from "./Prompt";
 
@@ -26,6 +27,10 @@ const History = styled.pre`
     white-space: pre-wrap;
     font-family: "NotoSansKR";
     font-size: 1rem;
+`
+
+const Flex = styled.div`
+    display: flex;
 `
 
 export function Body(){

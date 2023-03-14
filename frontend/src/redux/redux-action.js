@@ -23,6 +23,12 @@ export const reduxAction = {
             type : 'SESSION',
             data
         }
+    },
+    REMEMBER : (data) => {
+        return {
+            type : 'REMEMBER',
+            data
+        }
     }
 
 }
