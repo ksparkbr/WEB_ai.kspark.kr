@@ -17,5 +17,12 @@ export const reduxAction = {
             data
         }
     },
-    REFRESH : () => { return {type : 'REFRESH'} }
+    REFRESH : () => { return {type : 'REFRESH'} },
+    SESSION : (data) => {
+        return {
+            type : 'SESSION',
+            data
+        }
+    }
+
 }

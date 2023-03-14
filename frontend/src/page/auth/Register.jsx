@@ -121,6 +121,9 @@ export function RegisterModal({renderState}){
         ).then(res => {
             setRenderAlert({show: true, msg: res.data.msg});
             return;
+        }).catch(err => {
+            setRenderAlert({show: true, msg: err.response.data.msg});
+            return;
         });
     }
 
@@ -150,7 +153,7 @@ export function RegisterModal({renderState}){
             <Flex>
                 <FormControl>
                     <Title>비밀번호</Title>
-                    <input type="password" placeholder="sample@sample.com" 
+                    <input type="password" placeholder="8자이상, 영문, 숫자, 특수문자 포함"
                         ref={frmPassword}
                         onChange = {(e)=>{
                             setInfo({
@@ -164,7 +167,7 @@ export function RegisterModal({renderState}){
             <Flex>
                 <FormControl>
                     <Title>비밀번호확인</Title>
-                    <input type="password" placeholder="sample@sample.com" 
+                    <input type="password" placeholder="8자이상, 영문, 숫자, 특수문자 포함"
                         ref={frmPasswordConfirm}
                         onChange = {(e)=>{
                             setInfo({

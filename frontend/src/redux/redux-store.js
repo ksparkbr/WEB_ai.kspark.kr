@@ -4,6 +4,7 @@ const initState = {
     prompt : '',
     answer : '',
     history : [],
+    session: {},
 }
 
 const reducer = (state = initState, action)=>{
@@ -27,6 +28,11 @@ const reducer = (state = initState, action)=>{
             return {
                 ...state,
                 history : []
+            }
+        case 'SESSION':
+            return {
+                ...state,
+                session: action.data,
             }
         default:
             return state;

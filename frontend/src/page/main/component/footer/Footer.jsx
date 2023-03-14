@@ -88,12 +88,28 @@ export function Footer(){
                 !init && dispatch(reduxAction.HISTORY({type : 'prompt', msg : prompt, msgTime : new Date().toLocaleTimeString('en-US', {hour12: false})}))
                 textarea.current.value = '';
                 handleInput();
-                let url = `${process.env.REACT_APP_BACKEND}/ai/prompt`;
-                let res = await axios.post(url, {prompt}, {withCredentials: true}).then(res => res.data);
-                dispatch(reduxAction.HISTORY({type : 'answer', msg : res.message.content, msgTime : new Date().toLocaleTimeString('en-US', {hour12: false})}))
             }
         }
     };
+
+    useEffect(()=>{
+        let url = `${process.env.REACT_APP_BACKEND}/ai/prompt`;
+        if(history.length === 0){
+            axios.post(url, {prompt : []}, {withCredentials: true}).then(res => res.data).then(res =>{
+                dispatch(reduxAction.HISTORY({type : 'answer', msg : res.message.content, msgTime : new Date().toLocaleTimeString('en-US', {hour12: false})}))
+            });
+        }
+        if(history[history.length-1]?.type == 'prompt'){
+            let historybuf = [...history];
+            let maxLength = 5;
+            if(historybuf.length >= maxLength){
+                historybuf.splice(0, historybuf.length - maxLength);
+            }
+            axios.post(url, {prompt : historybuf.map(item => item.msg)}, {withCredentials: true}).then(res => res.data).then(res =>{
+                dispatch(reduxAction.HISTORY({type : 'answer', msg : res.message.content, msgTime : new Date().toLocaleTimeString('en-US', {hour12: false})}))
+            });
+        }
+    },[history])
 
     useEffect(()=>{
         if(textarea.current){

@@ -31,8 +31,6 @@ const History = styled.pre`
 export function Body(){
 
     const history = useSelector(s => s.history);
-    const answer = useSelector(s => s.answer);
-
     const wrapperRef = useRef();
 
     useEffect(()=>{
