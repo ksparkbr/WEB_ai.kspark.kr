@@ -60,8 +60,14 @@ authRouter.get("/check", checkSession, async (req, res)=>{
 authRouter.post("/changepass", checkSession, async (req, res)=>{
     let user_id = req.session?.user_id;
     let {password, newPassword, newPasswordConfirm} = req.body;
-    console.log(user_id, password, newPassword, newPasswordConfirm)
+    let user = await sqlMap.auth.selectUser({user_id});
+    if(user.length > 0){
 
+    }
+    else{
+        res.status(401)
+    }
+    
     res.send('test')
 })
 
