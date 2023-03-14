@@ -97,18 +97,7 @@ export default function LoadingSpinner(){
     return <>
         <Wrapper>
             <LdsSpinner>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
-                <div></div>
+              <div /><div /><div /><div /><div /><div /><div /><div /><div /><div /><div /><div />
             </LdsSpinner>
         </Wrapper>
     </>

@@ -6,6 +6,7 @@ const initState = {
     history : [],
     session: {},
     remember : 5,
+    loadingState : false
 }
 
 const reducer = (state = initState, action)=>{
@@ -39,6 +40,11 @@ const reducer = (state = initState, action)=>{
             return {
                 ...state,
                 remember : action.data,
+            }
+        case 'LOADING':
+            return {
+                ...state,
+                loadingState : action.data,
             }
         default:
             return state;

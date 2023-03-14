@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux"
 import styled from "styled-components"
 import { ConversationMemory } from "../../../../component/ConversationMemory";
+import { LoadingState } from "../../../../component/LoadingState";
 import { Answer } from "./Answer";
 import { Prompt } from "./Prompt";
 
@@ -26,7 +27,7 @@ const Wrapper = styled.div`
 const History = styled.pre`
     white-space: pre-wrap;
     font-family: "NotoSansKR";
-    font-size: 1rem;
+    font-size: .8rem;
 `
 
 const Flex = styled.div`
@@ -37,10 +38,15 @@ export function Body(){
 
     const history = useSelector(s => s.history);
     const wrapperRef = useRef();
+    const loadingState = useSelector(s => s.loadingState);
 
     useEffect(()=>{
         wrapperRef.current.scrollTo(0, wrapperRef.current.scrollHeight);
     },[history])
+
+    useEffect(()=>{
+        loadingState && wrapperRef.current.scrollTo(0, wrapperRef.current.scrollHeight);
+    }, [loadingState])
 
     return <Wrapper ref={wrapperRef}>
         {
@@ -52,6 +58,18 @@ export function Body(){
                     </History>
                 )
             })
+        }
+        {
+            loadingState && (
+                <History>
+                    <Answer>
+                        <LoadingState>
+                            잠시만 기다려주세요...
+                        </LoadingState>
+                    </Answer>
+                </History>
+
+            )
         }
     </Wrapper>
 }

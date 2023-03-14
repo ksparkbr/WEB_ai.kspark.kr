@@ -29,6 +29,12 @@ export const reduxAction = {
             type : 'REMEMBER',
             data
         }
+    },
+    LOADING : (data) => {
+        return {
+            type : 'LOADING',
+            data
+        }
     }
 
 }

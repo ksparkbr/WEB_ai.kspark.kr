@@ -20,7 +20,7 @@ const Icon = styled.img`
 `
 const TimeWrapper = styled.div`
     display: flex;
-    font-size: .8rem;
+    font-size: .7rem;
     align-items: end;
     color: grey;
 `

@@ -1,8 +1,9 @@
 import axios from "axios";
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components"
 import { reduxAction } from "../../../../redux/redux-action";
+import { LoadingState } from "../../../../component/LoadingState";
 
 const Wrapper = styled.div`
     position: absolute!important;
@@ -25,6 +26,10 @@ const AutoMargin = styled.div`
     @media screen and (max-width: 767px){
         max-width: 767px;
     }
+`
+
+const AutoMarginLeft = styled(AutoMargin)`
+    justify-content: start;
 `
 
 const Btn = styled.div`
@@ -71,6 +76,8 @@ export function Footer(){
     const dispatch = useDispatch();
     const history = useSelector(s => s.history);
     const remember = useSelector(s => s.remember);
+    const loadingState = useSelector(s => s.loadingState);
+    //const [loadingState, setLoadingState] = useState(false);
 
     useEffect(()=>{
         sendPrompt('인사', true)
@@ -97,8 +104,11 @@ export function Footer(){
     useEffect(()=>{
         let url = `${process.env.REACT_APP_BACKEND}/ai/prompt`;
         if(history.length === 0){
+            dispatch(reduxAction.LOADING(true))
             axios.post(url, {prompt : []}, {withCredentials: true}).then(res => res.data).then(res =>{
                 dispatch(reduxAction.HISTORY({type : 'answer', msg : res.message.content, msgTime : new Date().toLocaleTimeString('en-US', {hour12: false})}))
+                //setLoadingState(false);
+                dispatch(reduxAction.LOADING(false))
             });
         }
         if(history[history.length-1]?.type == 'prompt'){
@@ -107,8 +117,10 @@ export function Footer(){
             if(historybuf.length >= maxLength){
                 historybuf.splice(0, historybuf.length - maxLength);
             }
+            dispatch(reduxAction.LOADING(true))
             axios.post(url, {prompt : historybuf.map(item => item.msg)}, {withCredentials: true}).then(res => res.data).then(res =>{
                 dispatch(reduxAction.HISTORY({type : 'answer', msg : res.message.content, msgTime : new Date().toLocaleTimeString('en-US', {hour12: false})}))
+                dispatch(reduxAction.LOADING(false))
             });
         }
     },[history])
